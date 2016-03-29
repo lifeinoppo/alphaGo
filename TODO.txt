@@ -1,0 +1,38 @@
+
+{
+	The front-paged website 
+
+	tech bbs
+
+	* w3c tech, w3c plus, w3 help
+
+	* div.io , nodeParty
+
+	* 稀土掘金， 前端早读课
+
+	* alloyteam, html5基地
+
+	* W3 help
+
+}
+
+{
+
+	获取当前地理位置， 获取附近的好吃的
+
+}
+
+
+{
+
+	MYSQL operation 
+	
+		mysql,mysqli,PDO
+	
+	PHP frameworks (common use)
+		
+		ThinkPHP,Zendframework,Yii,Taf
+		
+	
+
+}

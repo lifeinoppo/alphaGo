@@ -7,6 +7,15 @@
 define("TOKEN", "teslar1991");
 
 require('tools/generator.php');
+require('tools/audio-flow.php');
+// require for chat function 
+//  require('CONTROLLER/smart/xiaoji_chat/chat.php');
+
+// for send nitifications 
+require('tools/mail.php');
+
+// for talking service 
+require('tools/msg/xiaohuangji.php');
 
 
 
@@ -154,9 +163,32 @@ class wechatCallbackapiTest
         }
         //auto response 
         else{
-			if (strstr($keyword, "test666")){
+			if (strstr($keyword, "recover")){
 				// just for debug and test here 
-                
+				file_put_contents("songname.txt","暖暖");  
+				file_put_contents("songlink.txt","http://sc.111ttt.com/up/mp3/230669/B60CA28FD2A8B3347EF5B766E1FFBB25.mp3");  
+				file_put_contents("xiaohuangji.txt","false");  
+				$content = "file put done";
+			}else if(strstr($keyword, "debug")){
+				$content = "debug head";
+				$song_debug = "start of song : ".file_get_contents("songname.txt").file_get_contents("songlink.txt")." end of song .";
+				$content = $content.$song_debug;
+				
+				// mail test
+				// $err = sendmail();
+				
+				$content = $content." mail sent already ..  ";
+				
+			}else if(strstr($keyword, "一闪一闪亮晶晶")){
+				// for talk rebot , move it to other places later 
+				file_put_contents("xiaohuangji.txt","true");
+				$content = "聊天哔哔模式开启！";
+			}else if(file_get_contents("xiaohuangji.txt") === "true"){
+				$content = xiaodoubi($keyword);
+			}else if(generateMusic($keyword) === "success"){
+				// music play
+				$song_debug = "start of song : ".file_get_contents("songname.txt").file_get_contents("songlink.txt")." end of song .";
+				$content = "update success ---- ".$song_debug;
 			}else if(strstr($keyword,'daily')){
 				// The famous zhihu daily and Qdaily
 				$content = "zhhrb.sinaapp.com"."\n"."\n"
@@ -172,14 +204,24 @@ class wechatCallbackapiTest
                 $content[] = array("Title"=>"多图文2标题", "Description"=>"", "PicUrl"=>"http://d.hiphotos.bdimg.com/wisegame/pic/item/f3529822720e0cf3ac9f1ada0846f21fbe09aaa3.jpg", "Url" =>"http://m.cnblogs.com/?u=txw1958");
                 $content[] = array("Title"=>"多图文3标题", "Description"=>"", "PicUrl"=>"http://g.hiphotos.bdimg.com/wisegame/pic/item/18cb0a46f21fbe090d338acc6a600c338644adfd.jpg", "Url" =>"http://m.cnblogs.com/?u=txw1958");
             }else if (strstr($keyword, "音乐")){
+				$name_of_song = file_get_contents("songname.txt");
+				$link_of_song = file_get_contents("songlink.txt");
                 $content = array();
-                $content = array("Title"=>"暖暖", "Description"=>"歌手：梁静茹", "MusicUrl"=>"http://sc.111ttt.com/up/mp3/230669/B60CA28FD2A8B3347EF5B766E1FFBB25.mp3", "HQMusicUrl"=>"http://sc.111ttt.com/up/mp3/230669/B60CA28FD2A8B3347EF5B766E1FFBB25.mp3");
+                $content = array("Title"=>$name_of_song, "Description"=>"你就听吧", "MusicUrl"=>$link_of_song, "HQMusicUrl"=>$link_of_song);
             }else{
 				
                 // $content = date("Y-m-d H:i:s",time())."\n".$object->FromUserName."\n 小帅这里给您,请安了,感谢方倍工作室开源技术";
-				$content = "https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=0&rsv_idx=1&tn=80035161_1_dg&wd=%E7%99%BD%E4%BA%91%E6%9C%BA%E5%9C%BA&rsv_pq=effcaa86000330b0&rsv_t=518fDMAi5gXg123qqX3zrEoAOaRC4NovSn1P57bzZaY93HDi%2FHOquVBHLiVjNl1uPFqLOw&rsv_enter=1&rsv_sug3=2&rsv_sug2=0&inputT=1639&rsv_sug4=4932";
 				
 				$content = generate($keyword);
+				
+				// the following function only happens in some special days 
+				/*
+				if(date('Y-m-j') != ("2016-03-28")){					
+					// seems no use 
+					$content = xiaoji($keyword);					
+			    }
+				*/
+				// end of the following function only happens in some special days 
 				
 				if(!empty($content)){
 					
@@ -246,6 +288,11 @@ class wechatCallbackapiTest
     private function receiveLink($object)
     {
         $content = "你发送的是链接，标题为：".$object->Title."；内容为：".$object->Description."；链接地址为：".$object->Url;
+		
+		// if this is one piece of music, record and update it to one-song-one-day
+		
+		
+		
         $result = $this->transmitText($object, $content);
 		// make records of savings , make them all through function save()  one day 
 		
