@@ -16,6 +16,8 @@ require('tools/mail.php');
 
 // for talking service 
 require('tools/msg/xiaohuangji.php');
+// rss feeds 
+require('MODEL/feed/songshuhui.php');
 
 
 
@@ -163,11 +165,20 @@ class wechatCallbackapiTest
         }
         //auto response 
         else{
+			
+			// add mail notification here 
+			if(file_get_contents("xiaohuangji.txt") != "true"){
+				// send notification not in auto-chatting mode, modify here later if needed 
+				$notifyerr = mail_notification($keyword);
+				file_put_contents("debuginfo.txt",$notifyerr); 
+			}
+			
 			if (strstr($keyword, "recover")){
 				// just for debug and test here 
 				file_put_contents("songname.txt","暖暖");  
 				file_put_contents("songlink.txt","http://sc.111ttt.com/up/mp3/230669/B60CA28FD2A8B3347EF5B766E1FFBB25.mp3");  
 				file_put_contents("xiaohuangji.txt","false");  
+				file_put_contents("debuginfo.txt","debug");  
 				$content = "file put done";
 			}else if(strstr($keyword, "debug")){
 				$content = "debug head";
@@ -175,9 +186,8 @@ class wechatCallbackapiTest
 				$content = $content.$song_debug;
 				
 				// mail test
-				// $err = sendmail();
 				
-				$content = $content." mail sent already ..  ";
+				$content = $content. file_get_contents("debuginfo.txt");
 				
 			}else if(strstr($keyword, "一闪一闪亮晶晶")){
 				// for talk rebot , move it to other places later 
@@ -189,7 +199,10 @@ class wechatCallbackapiTest
 				// music play
 				$song_debug = "start of song : ".file_get_contents("songname.txt").file_get_contents("songlink.txt")." end of song .";
 				$content = "update success ---- ".$song_debug;
-			}else if(strstr($keyword,'daily')){
+			}else if(strstr($keyword,'rss')){
+                $content = songshu();    
+
+            }else if(strstr($keyword,'daily')){
 				// The famous zhihu daily and Qdaily
 				$content = "zhhrb.sinaapp.com"."\n"."\n"
 							."www.qdaily.com/mobile/homes.html";
@@ -213,6 +226,7 @@ class wechatCallbackapiTest
                 // $content = date("Y-m-d H:i:s",time())."\n".$object->FromUserName."\n 小帅这里给您,请安了,感谢方倍工作室开源技术";
 				
 				$content = generate($keyword);
+				
 				
 				// the following function only happens in some special days 
 				/*

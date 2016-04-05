@@ -1,43 +1,72 @@
 <?php
-require('PHPMailer/PHPMailerAutoload.php');
+// require('PHPMailer/PHPMailerAutoload.php');
+
+require_once("PHPMailer/class.smtp.php"); 
+require_once("PHPMailer/class.phpmailer.php");  
+require("config.php");
+
+	// 弄成 动态 设置接口 , sendmail($config)
+
 
 	function sendmail(){
-		$mail = new PHPMailer;
-
-		$mail->SMTPDebug = 3;                               // Enable verbose debug output
-
-		$mail->isSMTP();                                      // Set mailer to use SMTP
-		$mail->Host = 'smtp.163.com';  // Specify main and backup SMTP servers
-		$mail->SMTPAuth = true;                               // Enable SMTP authentication
-		$mail->Username = '18680627452';                 // SMTP username
-		$mail->Password = 'simpleloginpass';                           // SMTP password
-		$mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
-		$mail->Port = 25;                                    // TCP port to connect to
-
-		$mail->setFrom('13751068127', 'Mailer');
-		$mail->addAddress('jxcjxcjzx@sina.com', 'jxcjxcjzx');     // Add a recipient
-		//$mail->addReplyTo('info@example.com', 'Information');
-		//$mail->addCC('cc@example.com');
-		//$mail->addBCC('bcc@example.com');
-
-		//$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
-		//$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
-		$mail->isHTML(true);                                  // Set email format to HTML
-
-		$mail->Subject = 'Here is the subject';
-		$mail->Body    = 'Hello world !';
-		//$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
-
 		
-		if(!$mail->send()) {
-			return $mail->ErrorInfo;
-			//echo 'Message could not be sent.';
-			//echo 'Mailer Error: ' . $mail->ErrorInfo;
-		} else {
-			//echo 'Message has been sent';
-		}
+			global $_INFO;
+			$mail = new PHPMailer();
+			$mail->CharSet = "UTF-8";      // 设置编码  
+  
+			$mail->IsSMTP();  
+			$mail->SMTPAuth = true;                // 设置为安全验证方式  
+			$mail->Host     = "smtp.sina.com";        // SMTP服务器地址  
+			$mail->Username = $_INFO['mail_username'];      // 登录用户名  
+			$mail->Password = $_INFO['mail_userpass'];               // 登录密码  
+			  
+			$mail->From = $_INFO['mail_username'];        // 发件人地址(username@163.com)  
+			$mail->FromName = "pushforalphago";      
+		  
+			$mail->WordWrap   = 50;  
+			$mail->IsHTML(true);            // 是否支持html邮件，true 或false  
+					 
+			$mail->AddAddress("jxcjxcjzx@sina.com");        //客户邮箱地址  
+			//$mail->Subject = "【反馈邮件】";  
+			$mail->Subject = "Hi from alphago";  
+			$mail->Body    = "Hi~~, jxcjxcjzx, welcome to php world ";  
+			if(!$mail->Send()){  			  
+			   return  $mail->ErrorInfo;    
+			}else{
+				return "";
+			}  
+				
+	}
+	
+	function mail_notification($notification){
 		
-	}	
+			// add check empty for $notification
+			
+			$mail = new PHPMailer();
+			$mail->CharSet = "UTF-8";      // 设置编码  
+  
+			$mail->IsSMTP();  
+			$mail->SMTPAuth = true;                // 设置为安全验证方式  
+			$mail->Host     = "smtp.sina.com";        // SMTP服务器地址  
+			$mail->Username = $_INFO['mail_username'];      // 登录用户名  
+			$mail->Password = $_INFo['mail_userpass'];               // 登录密码  
+			  
+			$mail->From = "pushforalphago@sina.com";        // 发件人地址(username@163.com)  
+			$mail->FromName = "pushforalphago";      
+		  
+			$mail->WordWrap   = 50;  
+			$mail->IsHTML(true);            // 是否支持html邮件，true 或false  
+					 
+			$mail->AddAddress("jxcjxcjzx@sina.com");        //客户邮箱地址  
+			//$mail->Subject = "【反馈邮件】";  
+			$mail->Subject = "Message from alphago"; 
+			$mail->Body    = $notification;  
+			if(!$mail->Send()){  			  
+			   return  $mail->ErrorInfo;    
+			}else{
+				return "";
+			}  
+	}
 
 
 ?>
