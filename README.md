@@ -12,5 +12,9 @@ service framework majoring php for my weixin service number
 
 ##虾面就是我的 微信公众账号啦
 
-![]()
+![](https://github.com/lifeinoppo/alphaGo/blob/master/thisisme.jpg)
+
+
+
+欢迎关注 吐槽。
 
