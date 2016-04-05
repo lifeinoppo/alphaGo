@@ -8,3 +8,9 @@ service framework majoring php for my weixin service number
 今天是彩蛋节，天气很好。
 
 后面对此文件进行 **使用方式**  **修改方式**
+
+
+##虾面就是我的 微信公众账号啦
+
+![]()
+
