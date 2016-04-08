@@ -3,7 +3,7 @@
 
 require_once("PHPMailer/class.smtp.php"); 
 require_once("PHPMailer/class.phpmailer.php");  
-require("config.php");
+
 
 	// 弄成 动态 设置接口 , sendmail($config)
 
@@ -11,6 +11,10 @@ require("config.php");
 	function sendmail(){
 		
 			global $_INFO;
+
+			$_INFO_text = file_get_contents("config.json");
+			$_INFO = json_decode($_INFO_text,true);
+
 			$mail = new PHPMailer();
 			$mail->CharSet = "UTF-8";      // 设置编码  
   

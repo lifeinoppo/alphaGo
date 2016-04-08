@@ -6,6 +6,7 @@
 
 define("TOKEN", "teslar1991");
 
+
 require('tools/generator.php');
 require('tools/audio-flow.php');
 // require for chat function 
@@ -18,6 +19,16 @@ require('tools/mail.php');
 require('tools/msg/xiaohuangji.php');
 // rss feeds 
 require('MODEL/feed/songshuhui.php');
+// position POI baidu api
+require('tools/POI/POI.php');
+
+
+// auto  update 
+if(isset($_POST['autoupdate'])){
+    // write it into debug file 
+    file_put_contents("debuginfo.txt",$_POST['autoupdate']); 
+
+}
 
 
 
@@ -170,7 +181,7 @@ class wechatCallbackapiTest
 			if(file_get_contents("xiaohuangji.txt") != "true"){
 				// send notification not in auto-chatting mode, modify here later if needed 
 				$notifyerr = mail_notification($keyword);
-				file_put_contents("debuginfo.txt",$notifyerr); 
+				//file_put_contents("debuginfo.txt",$notifyerr); 
 			}
 			
 			if (strstr($keyword, "recover")){
@@ -271,8 +282,30 @@ class wechatCallbackapiTest
     //接收位置消息
     private function receiveLocation($object)
     {
-        $content = "你发送的是位置，纬度为：".$object->Location_X."；经度为：".$object->Location_Y."；缩放级别为：".$object->Scale."；位置为：".$object->Label;
-        $result = $this->transmitText($object, $content);
+        // $content = "你发送的是位置，纬度为：".$object->Location_X."；经度为：".$object->Location_Y."；缩放级别为：".$object->Scale."；位置为：".$object->Label;
+
+        // parse and return the parsed result 
+        global $ak;
+        if( isset($ak) && !empty($ak) ){
+            // then good here    
+        }else {
+            $json_text = file_get_contents("config.json");
+            $ak = json_decode($json_text,true)["ak"];
+        }
+        $POIinfo = getPOIinfo($object->Location_X,$object->Location_Y,$ak);
+        
+        // $content = '当前位置为 : ' . POIinfo["status"];   // [0]['formatted_address'];
+        // file_put_contents("debuginfo.txt"," status is ".$POIinfo["status"]);  
+        // tmp debug 
+
+        $content = "小帅查到您当前所在位置 : " . $POIinfo["result"]["formatted_address"] . "\n";
+        $content = $content . "您的附近有 : " . "\n"; 
+        for ($x=0; $x<=8; $x++) {
+            $item = $POIinfo["result"]["pois"][$x];
+            $content = $content . $item["name"] . " --- " . $item["poiType"] ."(距您 " . $item["distance"] . " 米) " . "\n";      
+        } 
+
+        $result = $this->transmitText($object, $content); 
         return $result;
     }
 
