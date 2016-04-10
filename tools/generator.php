@@ -8,6 +8,14 @@
  */
 
 
+/*
+
+TODO  add github search engine 
+	
+	https://github.com/search?p=6&q=keywordyouwanttosearch&type=Code
+
+*/
+
     
 	function generate($keyword)
     {

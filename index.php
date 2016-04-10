@@ -22,6 +22,9 @@ require('MODEL/feed/songshuhui.php');
 // position POI baidu api
 require('tools/POI/POI.php');
 
+// the last one, db support
+require_once('MODEL/db/simpledbProxy.php');
+
 
 // auto  update 
 if(isset($_POST['autoupdate'])){
@@ -197,6 +200,23 @@ class wechatCallbackapiTest
 				$content = $content.$song_debug;
 				
 				// mail test
+
+                // mail test end 
+
+                // mysql test
+                
+                $json_text = file_get_contents("config.json");
+                $db_control = new simpledbProxy(json_decode($json_text,true)["db_username"],json_decode($json_text,true)["db_password"]);
+                $table = 'weChat_readingList';  // replace this later 
+                $sql = "SELECT link  FROM  weChat_readingList ";
+                $data = $db_control->get_all($sql);
+                if(!empty($data)){
+                    $content = $content . "数据库   查询成功 -- " . $data;
+                }else{
+                    $content = $content . "数据库   查询失败";
+                }
+                
+                // mysql test end 
 				
 				$content = $content. file_get_contents("debuginfo.txt");
 				
