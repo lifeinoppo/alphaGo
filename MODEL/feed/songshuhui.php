@@ -1,5 +1,7 @@
 <?php
-header('Content-type:text/html;charset=utf-8');
+
+// header('Content-type:text/html;charset=utf-8');
+
 function songshu(){
     $data=array();
     $url='http://songshuhui.net/feed';
